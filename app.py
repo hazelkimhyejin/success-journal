@@ -28,9 +28,9 @@ st.markdown("""
     z-index: 0;
 }
 
-/* ── Global soft purple background ── */
+/* ── Neon purple background ── */
 html, body, [data-testid="stAppViewContainer"], [data-testid="stApp"] {
-    background: #1e1a3a !important;
+    background: #6a0dad !important;
 }
 
 [data-testid="stAppViewContainer"] > .main {
@@ -39,42 +39,43 @@ html, body, [data-testid="stAppViewContainer"], [data-testid="stApp"] {
 
 /* ── Sidebar ── */
 [data-testid="stSidebar"] {
-    background: #252048 !important;
-    border-right: 1px solid rgba(175,169,236,0.2) !important;
+    background: #7b1fc4 !important;
+    border-right: 1px solid rgba(255,255,255,0.2) !important;
 }
-[data-testid="stSidebar"] * { color: #d4d0f0 !important; }
-[data-testid="stSidebar"] .stRadio label { color: #d4d0f0 !important; }
+[data-testid="stSidebar"] * { color: #ffffff !important; }
+[data-testid="stSidebar"] .stRadio label { color: #ffffff !important; }
 
 /* ── All text ── */
 html, body, p, div, span, label, .stMarkdown, .stText {
     font-family: 'DM Sans', sans-serif !important;
-    color: #ede9ff !important;
+    color: #ffffff !important;
 }
 
 h1, h2, h3 {
     font-family: 'Playfair Display', serif !important;
     font-weight: 500 !important;
-    color: #f5f2ff !important;
+    color: #ffffff !important;
 }
 
 /* ── Inputs & textareas ── */
 .stTextInput input, .stTextArea textarea, .stNumberInput input {
-    background: rgba(255,255,255,0.08) !important;
-    border: 1px solid rgba(175,169,236,0.4) !important;
+    background: #ffffff !important;
+    border: 2px solid rgba(255,255,255,0.6) !important;
     border-radius: 8px !important;
-    color: #f5f2ff !important;
+    color: #2a0050 !important;
     font-family: 'DM Sans', sans-serif !important;
     font-size: 0.88rem !important;
 }
 
 .stTextInput input:focus, .stTextArea textarea:focus {
-    border-color: rgba(175,169,236,0.8) !important;
-    box-shadow: 0 0 0 2px rgba(175,169,236,0.2) !important;
+    border-color: #ffffff !important;
+    box-shadow: 0 0 0 3px rgba(255,255,255,0.3) !important;
 }
 
 .stTextInput input::placeholder, .stTextArea textarea::placeholder {
-    color: rgba(210,205,255,0.6) !important;
+    color: #9b72cc !important;
     font-style: italic !important;
+    opacity: 1 !important;
 }
 
 /* ── Checkboxes ── */
