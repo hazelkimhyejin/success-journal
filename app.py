@@ -195,47 +195,69 @@ hr { border-color: rgba(175,169,236,0.2) !important; }
         H = canvas.height = window.innerHeight;
     }
 
+    function makeStar() {
+        return {
+            x: Math.random() * W,
+            y: Math.random() * -100,
+            r: Math.random() * 2.2 + 0.6,
+            speed: Math.random() * 2.5 + 1.2,
+            drift: (Math.random() - 0.5) * 0.6,
+            alpha: Math.random() * 0.6 + 0.4,
+            twinkle: Math.random() * Math.PI * 2,
+            twinkleSpeed: Math.random() * 0.04 + 0.01,
+            tail: Math.random() * 8 + 4,
+        };
+    }
+
     function init() {
         resize();
-        stars = Array.from({length: 120}, () => ({
-            x: Math.random() * W,
-            y: Math.random() * H,
-            r: Math.random() * 1.8 + 0.4,
-            speed: Math.random() * 0.6 + 0.2,
-            drift: (Math.random() - 0.5) * 0.4,
-            alpha: Math.random() * 0.7 + 0.3,
-            twinkle: Math.random() * Math.PI * 2,
-            twinkleSpeed: Math.random() * 0.03 + 0.01,
-        }));
+        stars = Array.from({length: 140}, () => {
+            const s = makeStar();
+            s.y = Math.random() * H;
+            return s;
+        });
     }
 
     function draw() {
         ctx.clearRect(0, 0, W, H);
         stars.forEach(s => {
             s.twinkle += s.twinkleSpeed;
-            const a = s.alpha * (0.6 + 0.4 * Math.sin(s.twinkle));
+            const a = s.alpha * (0.65 + 0.35 * Math.sin(s.twinkle));
+
+            // trailing tail going upward
+            const grad = ctx.createLinearGradient(s.x, s.y - s.tail, s.x, s.y);
+            grad.addColorStop(0, `rgba(200, 190, 255, 0)`);
+            grad.addColorStop(1, `rgba(200, 190, 255, ${a * 0.5})`);
+            ctx.beginPath();
+            ctx.moveTo(s.x, s.y - s.tail);
+            ctx.lineTo(s.x, s.y);
+            ctx.strokeStyle = grad;
+            ctx.lineWidth = s.r * 0.8;
+            ctx.stroke();
+
+            // star dot
             ctx.beginPath();
             ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-            ctx.fillStyle = `rgba(200, 190, 255, ${a})`;
+            ctx.fillStyle = `rgba(220, 210, 255, ${a})`;
             ctx.fill();
 
-            // tiny sparkle cross
-            if (s.r > 1.4) {
-                ctx.strokeStyle = `rgba(220, 215, 255, ${a * 0.6})`;
-                ctx.lineWidth = 0.5;
+            // sparkle cross on bigger stars
+            if (s.r > 1.6) {
+                ctx.strokeStyle = `rgba(240, 235, 255, ${a * 0.7})`;
+                ctx.lineWidth = 0.6;
+                const arm = s.r * 3;
                 ctx.beginPath();
-                ctx.moveTo(s.x - s.r * 2.5, s.y);
-                ctx.lineTo(s.x + s.r * 2.5, s.y);
-                ctx.moveTo(s.x, s.y - s.r * 2.5);
-                ctx.lineTo(s.x, s.y + s.r * 2.5);
+                ctx.moveTo(s.x - arm, s.y); ctx.lineTo(s.x + arm, s.y);
+                ctx.moveTo(s.x, s.y - arm); ctx.lineTo(s.x, s.y + arm);
                 ctx.stroke();
             }
 
             s.y += s.speed;
             s.x += s.drift;
-            if (s.y > H + 5) { s.y = -5; s.x = Math.random() * W; }
-            if (s.x > W + 5) s.x = -5;
-            if (s.x < -5)    s.x = W + 5;
+
+            if (s.y > H + 20) {
+                Object.assign(s, makeStar());
+            }
         });
         requestAnimationFrame(draw);
     }
