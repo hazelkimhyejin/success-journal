@@ -3,6 +3,7 @@ import pandas as pd
 from datetime import date, datetime
 import gspread
 from google.oauth2.service_account import Credentials
+from google.auth.exceptions import TransportError
 import json
 import plotly.graph_objects as go
 import plotly.express as px
@@ -27,9 +28,9 @@ st.markdown("""
     z-index: 0;
 }
 
-/* ── Global dark purple background ── */
+/* ── Global soft purple background ── */
 html, body, [data-testid="stAppViewContainer"], [data-testid="stApp"] {
-    background: #0d0b1e !important;
+    background: #1e1a3a !important;
 }
 
 [data-testid="stAppViewContainer"] > .main {
@@ -38,41 +39,41 @@ html, body, [data-testid="stAppViewContainer"], [data-testid="stApp"] {
 
 /* ── Sidebar ── */
 [data-testid="stSidebar"] {
-    background: #13103a !important;
-    border-right: 1px solid rgba(175,169,236,0.15) !important;
+    background: #252048 !important;
+    border-right: 1px solid rgba(175,169,236,0.2) !important;
 }
-[data-testid="stSidebar"] * { color: #c8c3f0 !important; }
-[data-testid="stSidebar"] .stRadio label { color: #c8c3f0 !important; }
+[data-testid="stSidebar"] * { color: #d4d0f0 !important; }
+[data-testid="stSidebar"] .stRadio label { color: #d4d0f0 !important; }
 
 /* ── All text ── */
 html, body, p, div, span, label, .stMarkdown, .stText {
     font-family: 'DM Sans', sans-serif !important;
-    color: #e8e4ff !important;
+    color: #ede9ff !important;
 }
 
 h1, h2, h3 {
     font-family: 'Playfair Display', serif !important;
     font-weight: 500 !important;
-    color: #f0eeff !important;
+    color: #f5f2ff !important;
 }
 
 /* ── Inputs & textareas ── */
 .stTextInput input, .stTextArea textarea, .stNumberInput input {
-    background: rgba(83,74,183,0.18) !important;
-    border: 1px solid rgba(175,169,236,0.3) !important;
+    background: rgba(255,255,255,0.08) !important;
+    border: 1px solid rgba(175,169,236,0.4) !important;
     border-radius: 8px !important;
-    color: #f0eeff !important;
+    color: #f5f2ff !important;
     font-family: 'DM Sans', sans-serif !important;
     font-size: 0.88rem !important;
 }
 
 .stTextInput input:focus, .stTextArea textarea:focus {
-    border-color: rgba(175,169,236,0.7) !important;
-    box-shadow: 0 0 0 2px rgba(175,169,236,0.15) !important;
+    border-color: rgba(175,169,236,0.8) !important;
+    box-shadow: 0 0 0 2px rgba(175,169,236,0.2) !important;
 }
 
 .stTextInput input::placeholder, .stTextArea textarea::placeholder {
-    color: rgba(200,195,240,0.4) !important;
+    color: rgba(210,205,255,0.6) !important;
     font-style: italic !important;
 }
 
@@ -301,6 +302,12 @@ COLUMNS = [
 def get_sheet():
     try:
         creds_dict = dict(st.secrets["gcp_service_account"])
+        # Fix key type compatibility - handle both RSA and generic PRIVATE KEY formats
+        if "private_key" in creds_dict:
+            key = creds_dict["private_key"]
+            if isinstance(key, str):
+                key = key.replace("\\n", "\n")
+                creds_dict["private_key"] = key
         creds = Credentials.from_service_account_info(creds_dict, scopes=SCOPES)
         client = gspread.authorize(creds)
         sheet_id = st.secrets["google_sheet_id"]
